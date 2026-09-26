@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smash Arena</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #0f3460);
+      color: white;
+      min-height: 100vh;
+      padding: 15px;
+    }
+    .container { max-width: 650px; margin: 0 auto; }
+    h1 { color: #e94560; text-align: center; font-size: 28px; margin-bottom: 15px; text-shadow: 0 0 20px #e94560; }
+    .tabs { display: flex; gap: 5px; margin-bottom: 20px; background: #16213e; padding: 5px; border-radius: 12px; }
+    .tab { flex: 1; padding: 12px; border: none; background: transparent; color: #888; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    .tab.activo { background: #e94560; color: white; }
+    .modo-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+    .modo-btn { background: #16213e; color: #888; padding: 8px 20px; border: 2px solid #16213e; font-size: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+    .modo-btn.activo { background: #e94560; color: white; border-color: #e94560; }
+    .card { background: rgba(22, 33, 62, 0.9); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 2px solid #16213e; }
+    .add-form { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+    input { flex: 1; min-width: 150px; padding: 12px; font-size: 15px; border-radius: 10px; border: 2px solid #e94560; background: #0f3460; color: white; outline: none; }
+    input::placeholder { color: #888; }
+    button { padding: 12px 18px; font-size: 15px; border-radius: 10px; border: none; background: #e94560; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    button:hover { background: #ff5577; }
+    h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .vs-1v1 { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+    .jugador-actual { background: #e94560; padding: 12px 18px; border-radius: 10px; min-width: 110px; font-size: 18px; font-weight: bold; box-shadow: 0 0 20px rgba(233, 69, 96, 0.5); text-align: center; }
+    .jugador-actual .pts-mini { display: block; font-size: 11px; opacity: 0.85; margin-top: 4px; font-weight: normal; }
+    .vs-texto { color: #ffd700; font-size: 24px; font-weight: bold; }
+    .equipos-2v2 { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+    .equipo { padding: 12px; border-radius: 12px; min-width: 150px; flex: 1; max-width: 200px; text-align: center; }
+    .equipo-rojo { background: linear-gradient(135deg, #e94560, #b8273f); }
+    .equipo-azul { background: linear-gradient(135deg, #0f6fd4, #0a4d94); }
+    .equipo-titulo { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; margin-bottom: 6px; }
+    .equipo-jugadores { font-size: 15px; font-weight: bold; line-height: 1.6; }
+    .equipo-jugadores .pts-mini { font-size: 11px; opacity: 0.85; font-weight: normal; }
+    .etiqueta { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; display: block; margin-bottom: 4px; }
+    .botones-ganador { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+    .btn-ganador { background: #28a745; padding: 10px 15px; font-size: 14px; }
+    .btn-ganador.rojo { background: #c72a45; }
+    .btn-ganador.azul { background: #0a4d94; }
+    .jugador { background: #0f3460; padding: 10px 12px; margin: 6px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-left: 4px solid #e94560; gap: 8px; }
+    .jugador.nuevo { border-left-color: #ffd700; background: #1a3a60; }
+    .jugador-info { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .badge { background: #ffd700; color: #1a1a2e; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+    .numero { color: #e94560; font-weight: bold; min-width: 18px; }
+    .btn-quitar { background: #dc3545; padding: 5px 9px; font-size: 13px; }
+    .vacio { text-align: center; color: #666; padding: 18px; font-style: italic; }
+    .btn-reset { background: #444; width: 100%; margin-top: 10px; }
+    .info-jugadores { text-align: center; color: #888; font-size: 12px; margin-bottom: 12px; }
+    .top-item { display: flex; align-items: center; gap: 10px; padding: 12px; margin: 8px 0; background: #0f3460; border-radius: 10px; border-left: 4px solid #e94560; }
+    .top-item.p1 { background: linear-gradient(135deg, #3a2500, #5a3a00); border-left-color: #ffd700; }
+    .top-item.p2 { background: linear-gradient(135deg, #2a2a2a, #3a3a3a); border-left-color: #c0c0c0; }
+    .top-item.p3 { background: linear-gradient(135deg, #3a1e0a, #5a2e12); border-left-color: #cd7f32; }
+    .top-pos { font-size: 20px; font-weight: bold; min-width: 40px; text-align: center; }
+    .top-info { flex: 1; }
+    .top-nombre { font-size: 16px; font-weight: bold; }
+    .top-stats { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .top-puntos { font-size: 18px; font-weight: bold; color: #ffd700; text-align: right; }
+    .top-acciones { display: flex; gap: 4px; margin-left: 8px; }
+    .btn-mini { padding: 5px 8px; font-size: 12px; border-radius: 6px; }
+    .btn-edit { background: #0f6fd4; }
+    .btn-del { background: #dc3545; }
+    .oculto { display: none; }
+
+    /* Pantalla de resultado */
+    .pantalla-resultado {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 10, 20, 0.95);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .pantalla-resultado.mostrar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .resultado-card {
+      background: linear-gradient(135deg, #16213e, #0f3460);
+      border: 3px solid #ffd700;
+      border-radius: 20px;
+      padding: 30px 25px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
+      animation: aparecer 0.4s ease;
+    }
+    @keyframes aparecer {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .resultado-titulo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ffd700;
+      margin-bottom: 25px;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+    .resultado-jugador {
+      background: #0a1a30;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 0;
+      text-align: left;
+    }
+    .resultado-jugador.ganador {
+      border: 2px solid #28a745;
+      background: linear-gradient(135deg, #0a3a1a, #0a1a30);
+    }
+    .resultado-jugador.perdedor {
+      border: 2px solid #dc3545;
+      background: linear-gradient(135deg, #3a0a0a, #0a1a30);
+    }
+    .resultado-nombre {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .resultado-ganador .resultado-nombre { color: #28a745; }
+    .resultado-perdedor .resultado-nombre { color: #ff6b6b; }
+    .resultado-puntos {
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .puntos-antes { color: #888; }
+    .puntos-flecha { color: #ffd700; font-size: 18px; }
+    .puntos-despues { color: #fff; font-weight: bold; font-size: 20px; }
+    .puntos-cambio {
+      font-size: 14px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .puntos-cambio.positivo { color: #28a745; }
+    .puntos-cambio.negativo { color: #ff6b6b; }
+    .puntos-cambio.empate { color: #888; }
+    .resultado-info {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .btn-continuar {
+      background: #28a745;
+      padding: 15px 40px;
+      font-size: 17px;
+      margin-top: 25px;
+      border-radius: 12px;
+    }
+    .btn-continuar:hover { background: #34ce57; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 SMASH ARENA</h1>
+
+    <div class="tabs">
+      <button class="tab activo" id="tabCola" onclick="cambiarTab('cola')">📋 Cola</button>
+      <button class="tab" id="tabTop" onclick="cambiarTab('top')">🏆 Top Mundial</button>
+    </div>
+
+    <div id="seccionCola">
+      <div class="modo-switch">
+        <button class="modo-btn activo" id="btn1v1" onclick="cambiarModo('1v1')">1 vs 1</button>
+        <button class="modo-btn" id="btn2v2" onclick="cambiarModo('2v2')">2 vs 2</button>
+      </div>
+      <div class="info-jugadores" id="infoJugadores"></div>
+      <div class="add-form">
+        <input id="nombre" placeholder="Nombre del jugador..." onkeypress="if(event.key==='Enter') agregar()">
+        <button onclick="agregar()">➕ Agregar</button>
+      </div>
+      <div class="card" id="partidaActual"></div>
+      <div class="card">
+        <h2>⏳ En cola</h2>
+        <div id="lista"></div>
+        <button class="btn-reset" onclick="resetFila()">🔄 Reiniciar fila</button>
+      </div>
+    </div>
+
+    <div id="seccionTop" class="oculto">
+      <div class="add-form">
+        <input id="nuevoTop" placeholder="Nombre para el top..." onkeypress="if(event.key==='Enter') agregarAlTop()">
+        <button onclick="agregarAlTop()">➕ Agregar al top</button>
+      </div>
+      <div class="card">
+        <h2>🏆 Top Mundial</h2>
+        <div id="listaTop"></div>
+        <button class="btn-reset" onclick="resetTop()">🔄 Reiniciar top completo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla de resultado -->
+  <div class="pantalla-resultado" id="pantallaResultado">
+    <div class="resultado-card">
+      <div class="resultado-titulo">🏆 GANÓ <span id="nombreGanador"></span></div>
+      <div id="resultadoCuerpo"></div>
+      <div class="resultado-info" id="resultadoInfo"></div>
+      <button class="btn-continuar" onclick="continuarPartida()">▶️ Continuar</button>
+    </div>
+  </div>
+
+  <script>
+    let fila = [];
+    let yaJugaron = new Set();
+    let modo = '1v1';
+    let tabActual = 'cola';
+    let ranking = {};
+    let accionPendiente = null;
+
+    function guardar() {
+      localStorage.setItem('smash_fila', JSON.stringify(fila));
+      localStorage.setItem('smash_historial', JSON.stringify([...yaJugaron]));
+      localStorage.setItem('smash_modo', modo);
+      localStorage.setItem('smash_ranking', JSON.stringify(ranking));
+    }
+
+    function cargar() {
+      try {
+        const f = localStorage.getItem('smash_fila');
+        const h = localStorage.getItem('smash_historial');
+        const m = localStorage.getItem('smash_modo');
+        const r = localStorage.getItem('smash_ranking');
+        if (f) fila = JSON.parse(f);
+        if (h) yaJugaron = new Set(JSON.parse(h));
+        if (m) modo = m;
+        if (r) ranking = JSON.parse(r);
+      } catch(e) {}
+    }
+
+    function cambiarTab(tab) {
+      tabActual = tab;
+      document.getElementById('tabCola').classList.toggle('activo', tab === 'cola');
+      document.getElementById('tabTop').classList.toggle('activo', tab === 'top');
+      document.getElementById('seccionCola').classList.toggle('oculto', tab !== 'cola');
+      document.getElementById('seccionTop').classList.toggle('oculto', tab !== 'top');
+      render();
+    }
+
+    function cambiarModo(nuevo) {
+      modo = nuevo;
+      document.getElementById('btn1v1').classList.toggle('activo', modo === '1v1');
+      document.getElementById('btn2v2').classList.toggle('activo', modo === '2v2');
+      guardar();
+      render();
+    }
+
+    function jugadoresPorPartida() { return modo === '1v1' ? 2 : 4; }
+
+    const PUNTOS_INICIALES = 300;
+
+    function obtenerPuntos(nombre) {
+      if (!ranking[nombre]) {
+        ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+      }
+      return ranking[nombre].puntos;
+    }
+
+    function calcularRobo(puntosGanador, puntosPerdedor) {
+      const diferencia = Math.abs(puntosPerdedor - puntosGanador);
+
+      if (diferencia === 0) {
+        return Math.round(puntosPerdedor * 0.20);
+      }
+
+      if (puntosGanador < puntosPerdedor) {
+        return Math.round(diferencia * 0.50);
+      }
+
+      return Math.round(diferencia * 0.05);
+    }
+
+    function ganador1v1(indice) {
+      const ganadorNombre = fila[indice];
+      const perdedorNombre = fila[1 - indice];
+
+      if (!ranking[ganadorNombre]) ranking[ganadorNombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+      if (!ranking[perdedorNombre]) ranking[perdedorNombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+
+      const antesG = ranking[ganadorNombre].puntos;
+      const antesP = ranking[perdedorNombre].puntos;
+      const robo = calcularRobo(antesG, antesP);
+
+      ranking[ganadorNombre].puntos += robo;
+      ranking[perdedorNombre].puntos = Math.max(0, ranking[perdedorNombre].puntos - robo);
+      ranking[ganadorNombre].victorias += 1;
+      ranking[perdedorNombre].derrotas += 1;
+
+      const despuesG = ranking[ganadorNombre].puntos;
+      const despuesP = ranking[perdedorNombre].puntos;
+
+      accionPendiente = () => {
+        const gN = ganadorNombre;
+        const pN = perdedorNombre;
+        fila.splice(0, 2);
+        fila.unshift(gN);
+        fila.push(pN);
+        yaJugaron.add(gN);
+        yaJugaron.add(pN);
+        guardar();
+        render();
+      };
+
+      mostrarResultado(ganadorNombre, perdedorNombre, antesG, despuesG, antesP, despuesP, robo);
+    }
+
+    function mostrarResultado(ganador, perdedor, antesG, despuesG, antesP, despuesP, robo) {
+      document.getElementById('nombreGanador').textContent = ganador;
+
+      const cambioG = despuesG - antesG;
+      const cambioP = despuesP - antesP;
+
+      let infoTexto = '';
+      if (robo === 0) {
+        infoTexto = '🤝 Estaban empatados en puntos, nadie roba';
+      } else {
+        infoTexto = `💰 Se robaron ${robo} pts`;
+      }
+
+      document.getElementById('resultadoCuerpo').innerHTML = `
+        <div class="resultado-jugador ganador resultado-ganador">
+          <div class="resultado-nombre">🏆 ${ganador}</div>
+          <div class="resultado-puntos">
+            <span>
+              <span class="puntos-antes">${antesG}</span>
+              <span class="puntos-flecha">→</span>
+              <span class="puntos-despues">${despuesG}</span>
+              <span class="puntos-cambio positivo">(+${cambioG})</span>
+            </span>
+          </div>
+        </div>
+        <div class="resultado-jugador perdedor resultado-perdedor">
+          <div class="resultado-nombre">😢 ${perdedor}</div>
+          <div class="resultado-puntos">
+            <span>
+              <span class="puntos-antes">${antesP}</span>
+              <span class="puntos-flecha">→</span>
+              <span class="puntos-despues">${despuesP}</span>
+              <span class="puntos-cambio negativo">(${cambioP})</span>
+            </span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('resultadoInfo').textContent = infoTexto;
+
+      document.getElementById('pantallaResultado').classList.add('mostrar');
+    }
+
+    function continuarPartida() {
+      document.getElementById('pantallaResultado').classList.remove('mostrar');
+      if (accionPendiente) {
+        accionPendiente();
+        accionPendiente = null;
+      }
+    }
+
+    function ganador2v2(equipoGanador) {
+      let ganadores, perdedores;
+      if (equipoGanador === 'rojo') {
+        ganadores = [fila[0], fila[2]];
+        perdedores = [fila[1], fila[3]];
+      } else {
+        ganadores = [fila[1], fila[3]];
+        perdedores = [fila[0], fila[2]];
+      }
+
+      fila.splice(0, 4);
+      const sig1 = fila.shift();
+      const sig2 = fila.shift();
+      fila.unshift(sig2);
+      fila.unshift(ganadores[1]);
+      fila.unshift(sig1);
+      fila.unshift(ganadores[0]);
+      fila.push(perdedores[0]);
+      fila.push(perdedores[1]);
+      [...ganadores, ...perdedores].forEach(n => yaJugaron.add(n));
+      guardar();
+      render();
+    }
+
+    function agregar() {
+      const input = document.getElementById('nombre');
+      const nombre = input.value.trim();
+      if (!nombre) return;
+      if (fila.includes(nombre)) { alert(`${nombre} ya está en la fila`); return; }
+
+      if (!ranking[nombre]) {
+        ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+      }
+
+      const esNuevo = !yaJugaron.has(nombre);
+      const enJuego = jugadoresPorPartida();
+
+      if (esNuevo) {
+        if (fila.length <= enJuego) fila.push(nombre);
+        else fila.splice(enJuego, 0, nombre);
+      } else {
+        fila.push(nombre);
+      }
+
+      input.value = '';
+      input.focus();
+      guardar();
+      render();
+    }
+
+    function agregarAlTop() {
+      const input = document.getElementById('nuevoTop');
+      const nombre = input.value.trim();
+      if (!nombre) return;
+      if (ranking[nombre]) { alert(`${nombre} ya está en el top`); return; }
+      ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+      input.value = '';
+      input.focus();
+      guardar();
+      render();
+    }
+
+    function render() {
+      if (tabActual === 'cola') renderCola();
+      else renderTop();
+    }
+
+    function renderCola() {
+      const info = document.getElementById('infoJugadores');
+      info.textContent = `📊 ${Object.keys(ranking).length} jugador${Object.keys(ranking).length !== 1 ? 'es' : ''} en el top`;
+      renderPartida();
+      renderListaCola();
+    }
+
+    function renderPartida() {
+      const div = document.getElementById('partidaActual');
+      const enJuego = jugadoresPorPartida();
+
+      if (fila.length < enJuego) {
+        div.innerHTML = `<h2>🎯 Partida actual (${modo})</h2><div class="vacio">Faltan jugadores: ${fila.length}/${enJuego}</div>`;
+        return;
+      }
+
+      if (modo === '1v1') {
+        const j1 = fila[0], j2 = fila[1];
+        const p1 = obtenerPuntos(j1), p2 = obtenerPuntos(j2);
+        div.innerHTML = `
+          <h2>🎯 Partida actual (1v1)</h2>
+          <div class="vs-1v1">
+            <div class="jugador-actual"><span class="etiqueta">Jugador 1</span>${j1}<span class="pts-mini">${p1} pts</span></div>
+            <span class="vs-texto">VS</span>
+            <div class="jugador-actual"><span class="etiqueta">Jugador 2</span>${j2}<span class="pts-mini">${p2} pts</span></div>
+          </div>
+          <p style="color:#aaa; margin-top:10px; text-align:center;">¿Quién ganó?</p>
+          <div class="botones-ganador">
+            <button class="btn-ganador" onclick="ganador1v1(0)">🏆 ${j1}</button>
+            <button class="btn-ganador" onclick="ganador1v1(1)">🏆 ${j2}</button>
+          </div>
+        `;
+      } else {
+        const rojo1 = fila[0], azul1 = fila[1], rojo2 = fila[2], azul2 = fila[3];
+        div.innerHTML = `
+          <h2>🎯 Partida actual (2v2)</h2>
+          <p style="color:#888; font-size:12px; text-align:center; margin-bottom:10px;">⚠️ Este modo no cuenta puntos</p>
+          <div class="equipos-2v2">
+            <div class="equipo equipo-rojo">
+              <div class="equipo-titulo">🔴 Equipo Rojo</div>
+              <div class="equipo-jugadores">${rojo1}<br>${rojo2}</div>
+            </div>
+            <span class="vs-texto">VS</span>
+            <div class="equipo equipo-azul">
+              <div class="equipo-titulo">🔵 Equipo Azul</div>
+              <div class="equipo-jugadores">${azul1}<br>${azul2}</div>
+            </div>
+          </div>
+          <p style="color:#aaa; margin-top:10px; text-align:center;">¿Qué equipo ganó?</p>
+          <div class="botones-ganador">
+            <button class="btn-ganador rojo" onclick="ganador2v2('rojo')">🏆 Rojo</button>
+            <button class="btn-ganador azul" onclick="ganador2v2('azul')">🏆 Azul</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderListaCola() {
+      const lista = document.getElementById('lista');
+      const enJuego = jugadoresPorPartida();
+      const enEspera = fila.slice(enJuego);
+      if (enEspera.length === 0) { lista.innerHTML = '<div class="vacio">No hay nadie esperando</div>'; return; }
+      lista.innerHTML = enEspera.map((j, i) => {
+        const esNuevo = !yaJugaron.has(j);
+        const posReal = i + enJuego + 1;
+        let indicador = '';
+        if (modo === '2v2') {
+          const esRojo = posReal % 2 === 1;
+          indicador = esRojo ? '<span style="color:#e94560; font-size:11px;">🔴</span>' : '<span style="color:#0f6fd4; font-size:11px;">🔵</span>';
+        }
+        return `
+          <div class="jugador ${esNuevo ? 'nuevo' : ''}">
+            <div class="jugador-info">
+              <span class="numero">${i + 1}.</span>${indicador}<span>${j}</span>
+              ${esNuevo ? '<span class="badge">NUEVO</span>' : ''}
+            </div>
+            <button class="btn-quitar" onclick="quitar('${j.replace(/'/g, "\\'")}')">❌</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function quitar(nombre) {
+      if (confirm(`¿Quitar a ${nombre} de la fila?`)) {
+        fila = fila.filter(n => n !== nombre);
+        guardar();
+        render();
+      }
+    }
+
+    function resetFila() {
+      if (confirm('¿Borrar la fila actual?')) {
+        fila = [];
+        guardar();
+        render();
+      }
+    }
+
+    function renderTop() {
+      const contenedor = document.getElementById('listaTop');
+      const jugadores = Object.keys(ranking).map(nombre => ({ nombre, ...ranking[nombre] })).sort((a, b) => b.puntos - a.puntos);
+      if (jugadores.length === 0) {
+        contenedor.innerHTML = '<div class="vacio">No hay jugadores en el top todavía</div>';
+        return;
+      }
+      contenedor.innerHTML = jugadores.map((j, i) => {
+        const pos = i + 1;
+        let medalla = '', clase = '';
+        if (pos === 1) { medalla = '🥇'; clase = 'p1'; }
+        else if (pos === 2) { medalla = '🥈'; clase = 'p2'; }
+        else if (pos === 3) { medalla = '🥉'; clase = 'p3'; }
+        else { medalla = `${pos}.`; }
+        return `
+          <div class="top-item ${clase}">
+            <div class="top-pos">${medalla}</div>
+            <div class="top-info">
+              <div class="top-nombre">${j.nombre}</div>
+              <div class="top-stats">${j.victorias}V - ${j.derrotas}D</div>
+            </div>
+            <div class="top-puntos">${j.puntos} pts</div>
+            <div class="top-acciones">
+              <button class="btn-mini btn-edit" onclick="editarJugador('${j.nombre.replace(/'/g, "\\'")}')">✏️</button>
+              <button class="btn-mini btn-del" onclick="eliminarDelTop('${j.nombre.replace(/'/g, "\\'")}')">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function editarJugador(nombre) {
+      const j = ranking[nombre];
+      if (!j) return;
+      const nuevosPuntos = prompt(`Puntos de ${nombre}:`, j.puntos);
+      if (nuevosPuntos === null) return;
+      const p = parseInt(nuevosPuntos);
+      if (isNaN(p) || p < 0) { alert('Puntos inválidos'); return; }
+      ranking[nombre].puntos = p;
+      guardar();
+      render();
+    }
+
+    function eliminarDelTop(nombre) {
+      if (confirm(`¿Eliminar a ${nombre} del top?`)) {
+        delete ranking[nombre];
+        fila = fila.filter(n => n !== nombre);
+        yaJugaron.delete(nombre);
+        guardar();
+        render();
+      }
+    }
+
+    function resetTop() {
+      if (confirm('⚠️ ¿Borrar TODO el top?')) {
+        if (confirm('¿Estás SEGURO?')) {
+          ranking = {};
+          fila = [];
+          yaJugaron.clear();
+          guardar();
+          render();
+        }
+      }
+    }
+
+    cargar();
+    document.getElementById('btn1v1').classList.toggle('activo', modo === '1v1');
+    document.getElementById('btn2v2').classList.toggle('activo', modo === '2v2');
+    render();
+  </script>
+</body>
+</html>
