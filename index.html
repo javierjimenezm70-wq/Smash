@@ -46,13 +46,15 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .vacio { text-align: center; color: #666; padding: 18px; font-style: italic; }
 .btn-reset { background: #444; width: 100%; margin-top: 10px; }
 .info-jugadores { text-align: center; color: #888; font-size: 12px; margin-bottom: 12px; }
+
+/* TOP Y MINI TOP */
 .top-item { display: flex; align-items: center; gap: 10px; padding: 12px; margin: 8px 0; background: #0f3460; border-radius: 10px; border-left: 4px solid #e94560; }
 .top-item.p1 { background: linear-gradient(135deg, #3a2500, #5a3a00); border-left-color: #ffd700; }
 .top-item.p2 { background: linear-gradient(135deg, #2a2a2a, #3a3a3a); border-left-color: #c0c0c0; }
 .top-item.p3 { background: linear-gradient(135deg, #3a1e0a, #5a2e12); border-left-color: #cd7f32; }
 .top-pos { font-size: 20px; font-weight: bold; min-width: 40px; text-align: center; }
 .top-info { flex: 1; }
-.top-nombre { font-size: 16px; font-weight: bold; }
+.top-nombre { font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 5px;}
 .top-stats { font-size: 12px; color: #aaa; margin-top: 2px; }
 .top-puntos { font-size: 18px; font-weight: bold; color: #ffd700; text-align: right; }
 .top-acciones { display: flex; gap: 4px; margin-left: 8px; }
@@ -60,6 +62,14 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .btn-edit { background: #0f6fd4; }
 .btn-del { background: #dc3545; }
 .oculto { display: none; }
+.racha { color: #ff9800; font-size: 13px; font-weight: bold; margin-left: 5px; text-shadow: 0 0 10px rgba(255,152,0,0.5);}
+
+/* HISTORIAL */
+.hist-item { font-size: 13px; padding: 8px; background: #0f3460; margin-bottom: 5px; border-radius: 8px; border-left: 3px solid #28a745; }
+.hist-ganador { color: #28a745; font-weight: bold; }
+.hist-perdedor { color: #ff6b6b; }
+
+/* RESULTADOS Y MODALES */
 .pantalla-resultado { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 20, 0.95); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
 .pantalla-resultado.mostrar { opacity: 1; pointer-events: auto; }
 .resultado-card { background: linear-gradient(135deg, #16213e, #0f3460); border: 3px solid #ffd700; border-radius: 20px; padding: 30px 25px; max-width: 500px; width: 100%; text-align: center; }
@@ -112,11 +122,19 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
       <input id="nombre" placeholder="Nombre del jugador..." onkeypress="if(event.key==='Enter') agregar()">
       <button onclick="agregar()">➕ Agregar</button>
     </div>
+    
     <div class="card" id="partidaActual"></div>
+    
     <div class="card">
       <h2>⏳ En cola</h2>
       <div id="lista"></div>
       <button class="btn-reset" onclick="resetFila()">🔄 Reiniciar fila</button>
+    </div>
+
+    <!-- NUEVO: HISTORIAL -->
+    <div class="card">
+      <h2>📜 Últimas partidas</h2>
+      <div id="historial"></div>
     </div>
   </div>
 
@@ -146,6 +164,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
     <div class="modal-titulo">🌙 Terminar sesión</div>
     <div class="modal-lista">
       <div>✅ Se borrará la <b>fila 1v1 y 2v2</b></div>
+      <div>✅ Se borrará el <b>historial de partidas</b></div>
       <div style="color:#ffd700; margin-top:8px;">🏆 El <b>Top Mundial se mantiene</b></div>
     </div>
     <div class="modal-botones">
@@ -171,24 +190,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Estado local
 let fila = [];
 let yaJugaron = [];
 let modo = '1v1';
 let tabActual = 'cola';
 let ranking = {};
+let historial = []; 
 let accionPendiente = null;
 let cargando = true;
 
 const PUNTOS_INICIALES = 300;
 
-// ========== FIREBASE ==========
 async function guardarFirebase() {
   try {
     await setDoc(doc(db, "app", "datos"), {
       fila: fila,
       yaJugaron: yaJugaron,
       ranking: ranking,
+      historial: historial,
       modo: modo,
       ultimaActualizacion: Date.now()
     });
@@ -205,12 +224,11 @@ function escucharFirebase() {
       fila = data.fila || [];
       yaJugaron = data.yaJugaron || [];
       ranking = data.ranking || {};
-      // El modo se mantiene local para no molestar a otros
+      historial = data.historial || [];
       cargando = false;
       document.getElementById('estado').textContent = '🟢 Conectado - Top mundial en vivo';
       render();
     } else {
-      // Primera vez: crear documento
       guardarFirebase();
     }
   }, (error) => {
@@ -219,7 +237,6 @@ function escucharFirebase() {
   });
 }
 
-// ========== TABS ==========
 function cambiarTab(tab) {
   tabActual = tab;
   document.getElementById('tabCola').classList.toggle('activo', tab === 'cola');
@@ -240,8 +257,9 @@ function jugadoresPorPartida() { return modo === '1v1' ? 2 : 4; }
 
 function obtenerPuntos(nombre) {
   if (!ranking[nombre]) {
-    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
   }
+  if (ranking[nombre].racha === undefined) ranking[nombre].racha = 0;
   return ranking[nombre].puntos;
 }
 
@@ -252,7 +270,6 @@ function calcularRobo(pG, pP) {
   return Math.round(dif * 0.05);
 }
 
-// ========== AGREGAR ==========
 async function agregar() {
   const input = document.getElementById('nombre');
   const nombre = input.value.trim();
@@ -260,7 +277,7 @@ async function agregar() {
   if (fila.includes(nombre)) { alert(`${nombre} ya está en la fila`); return; }
 
   if (!ranking[nombre]) {
-    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
   }
 
   const esNuevo = !yaJugaron.includes(nombre);
@@ -283,13 +300,12 @@ async function agregarAlTop() {
   const nombre = input.value.trim();
   if (!nombre) return;
   if (ranking[nombre]) { alert(`${nombre} ya está en el top`); return; }
-  ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+  ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
   input.value = '';
   input.focus();
   await guardarFirebase();
 }
 
-// ========== RENDER ==========
 function render() {
   if (cargando) return;
   if (tabActual === 'cola') renderCola();
@@ -300,6 +316,7 @@ function renderCola() {
   document.getElementById('infoJugadores').textContent = `📊 ${Object.keys(ranking).length} jugadores en el top`;
   renderPartida();
   renderListaCola();
+  renderHistorial();
 }
 
 function renderPartida() {
@@ -370,13 +387,23 @@ function renderListaCola() {
   }).join('');
 }
 
-// ========== GANADOR 1v1 ==========
+function renderHistorial() {
+  const div = document.getElementById('historial');
+  if (!historial || historial.length === 0) { div.innerHTML = '<div class="vacio">Aún no hay partidas</div>'; return; }
+  div.innerHTML = historial.map(h => `
+    <div class="hist-item">
+      <span class="hist-ganador">🏆 ${h.ganador}</span> venció a <span class="hist-perdedor">${h.perdedor}</span>
+      <span style="color:#888; float:right;">(${h.robo} pts)</span>
+    </div>
+  `).join('');
+}
+
 function ganador1v1(indice) {
   const gN = fila[indice];
   const pN = fila[1 - indice];
 
-  if (!ranking[gN]) ranking[gN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
-  if (!ranking[pN]) ranking[pN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0 };
+  if (!ranking[gN]) ranking[gN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
+  if (!ranking[pN]) ranking[pN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
 
   const antesG = ranking[gN].puntos;
   const antesP = ranking[pN].puntos;
@@ -386,9 +413,15 @@ function ganador1v1(indice) {
   ranking[pN].puntos = Math.max(0, ranking[pN].puntos - robo);
   ranking[gN].victorias += 1;
   ranking[pN].derrotas += 1;
+  
+  ranking[gN].racha = (ranking[gN].racha || 0) + 1;
+  ranking[pN].racha = 0;
 
   const despG = ranking[gN].puntos;
   const despP = ranking[pN].puntos;
+
+  historial.unshift({ ganador: gN, perdedor: pN, robo: robo, fecha: Date.now() });
+  if (historial.length > 10) historial.pop(); 
 
   accionPendiente = async () => {
     fila.splice(0, 2);
@@ -434,7 +467,6 @@ async function continuarPartida() {
   }
 }
 
-// ========== GANADOR 2v2 ==========
 async function ganador2v2(eq) {
   let g, p;
   if (eq === 'rojo') { g = [fila[0], fila[2]]; p = [fila[1], fila[3]]; }
@@ -449,7 +481,6 @@ async function ganador2v2(eq) {
   await guardarFirebase();
 }
 
-// ========== QUITAR ==========
 async function quitar(nombre) {
   if (confirm(`¿Quitar a ${nombre}?`)) {
     fila = fila.filter(n => n !== nombre);
@@ -464,7 +495,6 @@ async function resetFila() {
   }
 }
 
-// ========== TOP ==========
 function renderTop() {
   const cont = document.getElementById('listaTop');
   const jugs = Object.keys(ranking).map(n => ({ nombre: n, ...ranking[n] })).sort((a, b) => b.puntos - a.puntos);
@@ -476,11 +506,17 @@ function renderTop() {
     else if (pos === 2) { med = '🥈'; cls = 'p2'; }
     else if (pos === 3) { med = '🥉'; cls = 'p3'; }
     else { med = `${pos}.`; }
+    
+    let rachaHTML = '';
+    if (j.racha >= 2) {
+      rachaHTML = `<span class="racha">🔥 x${j.racha}</span>`;
+    }
+
     return `
       <div class="top-item ${cls}">
         <div class="top-pos">${med}</div>
         <div class="top-info">
-          <div class="top-nombre">${j.nombre}</div>
+          <div class="top-nombre">${j.nombre} ${rachaHTML}</div>
           <div class="top-stats">${j.victorias}V - ${j.derrotas}D</div>
         </div>
         <div class="top-puntos">${j.puntos} pts</div>
@@ -513,21 +549,19 @@ async function eliminarDelTop(nombre) {
   }
 }
 
-// ========== MODAL SESIÓN ==========
 function abrirModalSesion() { document.getElementById('modalSesion').classList.add('mostrar'); }
 function cerrarModalSesion() { document.getElementById('modalSesion').classList.remove('mostrar'); }
 async function confirmarTerminarSesion() {
   fila = [];
   yaJugaron = [];
+  historial = []; 
   await guardarFirebase();
   cerrarModalSesion();
   alert('✅ Sesión terminada\n🎮 Filas vacías\n🏆 Top mantenido');
 }
 
-// ========== INICIO ==========
 escucharFirebase();
 
-// Exponer funciones al HTML
 window.cambiarTab = cambiarTab;
 window.cambiarModo = cambiarModo;
 window.agregar = agregar;
