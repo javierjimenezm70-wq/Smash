@@ -62,6 +62,11 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .btn-quitar { background: #dc3545; padding: 5px 9px; font-size: 13px; }
 .vacio { text-align: center; color: #666; padding: 18px; font-style: italic; }
 .btn-reset { background: #444; width: 100%; margin-top: 10px; }
+
+/* NUEVO: Botón de copiar al chat */
+.btn-copiar { background: #7289da; width: 100%; margin-top: 10px; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+.btn-copiar:hover { background: #5b6eae; }
+
 .info-jugadores { text-align: center; color: #888; font-size: 12px; margin-bottom: 12px; }
 
 .top-item { display: flex; align-items: center; gap: 10px; padding: 12px; margin: 8px 0; background: #0f3460; border-radius: 10px; border-left: 4px solid #e94560; }
@@ -153,6 +158,8 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
     <div class="card">
       <h2>⏳ En cola</h2>
       <div id="lista"></div>
+      <!-- NUEVO BOTÓN DE COPIAR -->
+      <button class="btn-copiar" id="btnCopiar" onclick="copiarSiguientes()" style="display:none;">📋 Copiar siguientes 4 al chat</button>
       <button class="btn-reset" id="btnReset" onclick="resetFila()" style="display:none;">🔄 Reiniciar fila</button>
     </div>
 
@@ -214,13 +221,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 👑 LAS 3 CONTRASEÑAS MAESTRAS 👑
-const PASSWORDS = [
-  "Danonino", 
-  "Green princes", 
-  "El crak",
-  "👑 Green princes 👑" // Por si la escribes con las coronas
-];
+const PASSWORDS = ["Danonino", "Green princes", "El crak", "👑 Green princes 👑"];
 
 let ranking = {}; 
 let esAdmin = false;
@@ -249,9 +250,7 @@ function escucharFirebase() {
     if (docSnap.exists()) {
       const data = docSnap.data();
       ranking = data.ranking || {};
-      if (data.salas) {
-        salas = data.salas;
-      }
+      if (data.salas) salas = data.salas;
       cargando = false;
       document.getElementById('estado').textContent = '🟢 Conectado - Top mundial en vivo';
       render();
@@ -268,7 +267,6 @@ function toggleAdmin() {
     document.getElementById('btnAdmin').textContent = '🔒 Modo Espectador (Toca para Admin)';
   } else {
     const pass = prompt("Ingresa la contraseña de Admin:");
-    // Comprobamos si la contraseña está en la lista
     if (pass !== null && PASSWORDS.includes(pass)) {
       esAdmin = true;
       document.getElementById('btnAdmin').className = 'btn-admin activo';
@@ -281,10 +279,7 @@ function toggleAdmin() {
   render();
 }
 
-function cambiarSala(nuevaSala) {
-  salaActual = nuevaSala;
-  render();
-}
+function cambiarSala(nuevaSala) { salaActual = nuevaSala; render(); }
 
 function togglePuntos() {
   if (!esAdmin) return;
@@ -309,9 +304,7 @@ function cambiarTab(tab) {
 function jugadoresPorPartida() { return salas[salaActual].modo === '1v1' ? 2 : 4; }
 
 function obtenerPuntos(nombre) {
-  if (!ranking[nombre]) {
-    ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
-  }
+  if (!ranking[nombre]) ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
   if (ranking[nombre].racha === undefined) ranking[nombre].racha = 0;
   return ranking[nombre].puntos;
 }
@@ -331,7 +324,6 @@ async function agregar() {
   
   const s = salas[salaActual];
   if (s.fila.includes(nombre)) { alert(`${nombre} ya está en esta fila`); return; }
-
   if (!ranking[nombre]) ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
 
   const esNuevo = !s.yaJugaron.includes(nombre);
@@ -360,6 +352,34 @@ async function agregarAlTop() {
   await guardarFirebase();
 }
 
+// 🚀 NUEVA FUNCIÓN PARA COPIAR AL CHAT
+function copiarSiguientes() {
+  const s = salas[salaActual];
+  const enJuego = jugadoresPorPartida();
+  const enEspera = s.fila.slice(enJuego); // Agarramos a los que están en cola
+  
+  if (enEspera.length === 0) {
+    alert("No hay nadie en la fila para copiar.");
+    return;
+  }
+
+  // Agarra los siguientes 4 (o los que queden si hay menos de 4)
+  const siguientes = enEspera.slice(0, 4);
+  
+  let texto = "📋 SIGUIENTES EN FILA:\n";
+  siguientes.forEach((nombre, i) => {
+    texto += `${i + 1}. ${nombre}\n`;
+  });
+
+  // Copiar al portapapeles
+  navigator.clipboard.writeText(texto).then(() => {
+    alert("¡Copiado! Solo abre el chat de tu live y dale a Pegar.");
+  }).catch(err => {
+    // Si el celular no deja copiar directo, mostramos el texto para copiar manual
+    prompt("Copia este texto manualmente:", texto);
+  });
+}
+
 function render() {
   if (cargando) return;
   
@@ -369,6 +389,7 @@ function render() {
   document.getElementById('formAgregar').style.display = esAdmin ? 'flex' : 'none';
   document.getElementById('formTop').style.display = esAdmin ? 'flex' : 'none';
   document.getElementById('btnReset').style.display = esAdmin ? 'block' : 'none';
+  document.getElementById('btnCopiar').style.display = esAdmin ? 'flex' : 'none'; // Mostrar botón copiar solo a admins
   document.getElementById('cardHistorial').style.display = esAdmin ? 'block' : 'none';
   
   document.getElementById('btn1v1').disabled = !esAdmin;
@@ -697,6 +718,7 @@ window.cambiarTab = cambiarTab;
 window.cambiarModo = cambiarModo;
 window.agregar = agregar;
 window.agregarAlTop = agregarAlTop;
+window.copiarSiguientes = copiarSiguientes;
 window.ganador1v1 = ganador1v1;
 window.ganador2v2 = ganador2v2;
 window.continuarPartida = continuarPartida;
