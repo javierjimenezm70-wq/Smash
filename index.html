@@ -15,7 +15,6 @@ h1 { color: #e94560; text-align: center; font-size: 28px; margin-bottom: 5px; te
 .btn-admin { background: #333; color: #ccc; padding: 8px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #555; cursor: pointer; }
 .btn-admin.activo { background: #ffd700; color: #000; border-color: #ffd700; font-weight: bold; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
 
-/* BARRA DE SALAS */
 .salas-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
 .btn-sala { padding: 10px 20px; border-radius: 10px; font-weight: bold; border: 2px solid transparent; cursor: pointer; font-size: 14px; background: #16213e; color: #888; }
 .btn-sala.activo-live { background: #e94560; color: white; box-shadow: 0 0 10px rgba(233,69,96,0.5); }
@@ -44,6 +43,17 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .jugador-actual { background: #e94560; padding: 12px 18px; border-radius: 10px; min-width: 110px; font-size: 18px; font-weight: bold; text-align: center; }
 .jugador-actual .pts-mini { display: block; font-size: 11px; opacity: 0.85; margin-top: 4px; font-weight: normal; }
 .vs-texto { color: #ffd700; font-size: 24px; font-weight: bold; }
+.equipos-2v2 { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+.equipo { padding: 12px; border-radius: 12px; min-width: 150px; flex: 1; max-width: 200px; text-align: center; }
+.equipo-rojo { background: linear-gradient(135deg, #e94560, #b8273f); }
+.equipo-azul { background: linear-gradient(135deg, #0f6fd4, #0a4d94); }
+.equipo-titulo { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; margin-bottom: 6px; }
+.equipo-jugadores { font-size: 15px; font-weight: bold; line-height: 1.6; }
+.etiqueta { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; display: block; margin-bottom: 4px; }
+.botones-ganador { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.btn-ganador { background: #28a745; padding: 10px 15px; font-size: 14px; }
+.btn-ganador.rojo { background: #c72a45; }
+.btn-ganador.azul { background: #0a4d94; }
 .jugador { background: #0f3460; padding: 10px 12px; margin: 6px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-left: 4px solid #e94560; }
 .jugador.nuevo { border-left-color: #ffd700; background: #1a3a60; }
 .jugador-info { display: flex; align-items: center; gap: 8px; flex: 1; }
@@ -113,7 +123,6 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
     <button class="btn-admin" id="btnAdmin" onclick="toggleAdmin()">🔒 Modo Espectador (Toca para Admin)</button>
   </div>
 
-  <!-- SELECTOR DE SALAS -->
   <div class="salas-bar">
     <button class="btn-sala activo-live" id="btnSalaLive" onclick="cambiarSala('live')">🔴 SALA LIVE</button>
     <button class="btn-sala" id="btnSalaPub" onclick="cambiarSala('publica')">🔵 SALA PÚBLICA</button>
@@ -165,7 +174,6 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   </div>
 </div>
 
-<!-- MODAL RESULTADO -->
 <div class="pantalla-resultado" id="pantallaResultado">
   <div class="resultado-card">
     <div class="resultado-titulo">🏆 GANÓ <span id="nombreGanador"></span></div>
@@ -175,7 +183,6 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   </div>
 </div>
 
-<!-- MODAL TERMINAR SESIÓN -->
 <div class="modal" id="modalSesion">
   <div class="modal-card">
     <div class="modal-titulo">🌙 Terminar sesión Live</div>
@@ -207,15 +214,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const ADMIN_PASSWORD = "Elcrak"; 
+// 👑 AQUÍ ESTÁ LA NUEVA CONTRASEÑA 👑
+const ADMIN_PASSWORD = "Green princes"; 
 
-// ESTADO GLOBAL
-let ranking = {}; // El Top es global para todos
+let ranking = {}; 
 let esAdmin = false;
-let salaActual = 'live'; // 'live' o 'publica'
+let salaActual = 'live'; 
 let cargando = true;
 
-// ESTADO DE LAS SALAS
 let salas = {
   live: { fila: [], yaJugaron: [], modo: '1v1', puntosActivos: true, historial: [] },
   publica: { fila: [], yaJugaron: [], modo: '1v1', puntosActivos: false, historial: [] }
@@ -250,7 +256,6 @@ function escucharFirebase() {
   });
 }
 
-// ========== CONTROLES ==========
 function toggleAdmin() {
   if (esAdmin) {
     esAdmin = false;
@@ -312,7 +317,6 @@ function calcularRobo(pG, pP) {
   return Math.round(dif * 0.05);
 }
 
-// ========== AGREGAR ==========
 async function agregar() {
   if (!esAdmin) return;
   const input = document.getElementById('nombre');
@@ -350,11 +354,9 @@ async function agregarAlTop() {
   await guardarFirebase();
 }
 
-// ========== RENDER ==========
 function render() {
   if (cargando) return;
   
-  // UI Salas
   document.getElementById('btnSalaLive').className = 'btn-sala ' + (salaActual === 'live' ? 'activo-live' : '');
   document.getElementById('btnSalaPub').className = 'btn-sala ' + (salaActual === 'publica' ? 'activo-pub' : '');
   
@@ -479,7 +481,6 @@ function renderHistorial() {
   `).join('');
 }
 
-// ========== GANADORES ==========
 function ganador1v1(indice) {
   if (!esAdmin) return;
   const s = salas[salaActual];
@@ -504,7 +505,6 @@ function ganador1v1(indice) {
     if (s.historial.length > 10) s.historial.pop();
   }
 
-  // Rotar
   s.fila.splice(0, 2); s.fila.unshift(gN); s.fila.push(pN);
   if (!s.yaJugaron.includes(gN)) s.yaJugaron.push(gN);
   if (!s.yaJugaron.includes(pN)) s.yaJugaron.push(pN);
@@ -521,17 +521,41 @@ function ganador1v1(indice) {
 async function ganador2v2(eq) {
   if (!esAdmin) return;
   const s = salas[salaActual];
-  let g, p;
-  if (eq === 'rojo') { g = [s.fila[0], s.fila[2]]; p = [s.fila[1], s.fila[3]]; }
-  else { g = [s.fila[1], s.fila[3]]; p = [s.fila[0], s.fila[2]]; }
+  let ganadores, perdedores;
+
+  if (eq === 'rojo') { 
+    ganadores = [s.fila[0], s.fila[2]]; 
+    perdedores = [s.fila[1], s.fila[3]]; 
+  } else { 
+    ganadores = [s.fila[1], s.fila[3]]; 
+    perdedores = [s.fila[0], s.fila[2]]; 
+  }
 
   s.fila.splice(0, 4);
-  const s1 = s.fila.shift(); const s2 = s.fila.shift();
-  s.fila.unshift(s2); s.fila.unshift(g[1]); s.fila.unshift(s1); s.fila.unshift(g[0]);
-  s.fila.push(p[0]); s.fila.push(p[1]);
+  const siguiente1 = s.fila.shift();
+  const siguiente2 = s.fila.shift();
+
+  if (eq === 'rojo') {
+    s.fila.unshift(siguiente2); 
+    s.fila.unshift(ganadores[1]); 
+    s.fila.unshift(siguiente1); 
+    s.fila.unshift(ganadores[0]); 
+  } else {
+    s.fila.unshift(ganadores[1]); 
+    s.fila.unshift(siguiente2); 
+    s.fila.unshift(ganadores[0]); 
+    s.fila.unshift(siguiente1); 
+  }
+
+  s.fila.push(perdedores[0]);
+  s.fila.push(perdedores[1]);
+
+  [...ganadores, ...perdedores].forEach(n => { 
+    if (!s.yaJugaron.includes(n)) s.yaJugaron.push(n); 
+  });
   
-  [...g, ...p].forEach(n => { if (!s.yaJugaron.includes(n)) s.yaJugaron.push(n); });
   guardarFirebase();
+  render();
 }
 
 function mostrarResultado(g, p, aG, dG, aP, dP, robo) {
@@ -589,7 +613,6 @@ async function resetFila() {
   }
 }
 
-// ========== TOP ==========
 function renderTop() {
   const cont = document.getElementById('listaTop');
   const jugs = Object.keys(ranking).map(n => ({ nombre: n, ...ranking[n] })).sort((a, b) => b.puntos - a.puntos);
