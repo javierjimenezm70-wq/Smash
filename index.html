@@ -8,19 +8,32 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e, #0f3460); color: white; min-height: 100vh; padding: 15px; }
 .container { max-width: 650px; margin: 0 auto; }
-h1 { color: #e94560; text-align: center; font-size: 28px; margin-bottom: 15px; text-shadow: 0 0 20px #e94560; }
+h1 { color: #e94560; text-align: center; font-size: 28px; margin-bottom: 5px; text-shadow: 0 0 20px #e94560; }
+.estado { text-align: center; color: #ffd700; font-size: 12px; margin-bottom: 15px; }
+
+/* BOTÓN ADMIN */
+.admin-bar { text-align: center; margin-bottom: 15px; }
+.btn-admin { background: #333; color: #ccc; padding: 8px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #555; cursor: pointer; }
+.btn-admin.activo { background: #ffd700; color: #000; border-color: #ffd700; font-weight: bold; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+
 .tabs-row { display: flex; gap: 5px; margin-bottom: 20px; background: #16213e; padding: 5px; border-radius: 12px; }
 .tab { flex: 1; padding: 12px; border: none; background: transparent; color: #888; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 .tab.activo { background: #e94560; color: white; }
 .btn-sesion { background: #0f6fd4; color: white; border: none; padding: 12px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; }
-.modo-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-.modo-btn { background: #16213e; color: #888; padding: 8px 20px; border: 2px solid #16213e; font-size: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+.btn-sesion:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.modo-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+.modo-btn { background: #16213e; color: #888; padding: 8px 15px; border: 2px solid #16213e; font-size: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
 .modo-btn.activo { background: #e94560; color: white; border-color: #e94560; }
+.btn-puntos { background: #28a745; color: white; border-color: #28a745; }
+.btn-puntos.off { background: #555; color: #ccc; border-color: #555; }
+
 .card { background: rgba(22, 33, 62, 0.9); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 2px solid #16213e; }
 .add-form { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
 input { flex: 1; min-width: 150px; padding: 12px; font-size: 15px; border-radius: 10px; border: 2px solid #e94560; background: #0f3460; color: white; outline: none; }
 input::placeholder { color: #888; }
 button { padding: 12px 18px; font-size: 15px; border-radius: 10px; border: none; background: #e94560; color: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
+button:disabled { background: #555; cursor: not-allowed; color: #888; }
 h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 .vs-1v1 { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
 .jugador-actual { background: #e94560; padding: 12px 18px; border-radius: 10px; min-width: 110px; font-size: 18px; font-weight: bold; text-align: center; }
@@ -47,7 +60,6 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .btn-reset { background: #444; width: 100%; margin-top: 10px; }
 .info-jugadores { text-align: center; color: #888; font-size: 12px; margin-bottom: 12px; }
 
-/* TOP Y MINI TOP */
 .top-item { display: flex; align-items: center; gap: 10px; padding: 12px; margin: 8px 0; background: #0f3460; border-radius: 10px; border-left: 4px solid #e94560; }
 .top-item.p1 { background: linear-gradient(135deg, #3a2500, #5a3a00); border-left-color: #ffd700; }
 .top-item.p2 { background: linear-gradient(135deg, #2a2a2a, #3a3a3a); border-left-color: #c0c0c0; }
@@ -64,12 +76,10 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .oculto { display: none; }
 .racha { color: #ff9800; font-size: 13px; font-weight: bold; margin-left: 5px; text-shadow: 0 0 10px rgba(255,152,0,0.5);}
 
-/* HISTORIAL */
 .hist-item { font-size: 13px; padding: 8px; background: #0f3460; margin-bottom: 5px; border-radius: 8px; border-left: 3px solid #28a745; }
 .hist-ganador { color: #28a745; font-weight: bold; }
 .hist-perdedor { color: #ff6b6b; }
 
-/* RESULTADOS Y MODALES */
 .pantalla-resultado { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 20, 0.95); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
 .pantalla-resultado.mostrar { opacity: 1; pointer-events: auto; }
 .resultado-card { background: linear-gradient(135deg, #16213e, #0f3460); border: 3px solid #ffd700; border-radius: 20px; padding: 30px 25px; max-width: 500px; width: 100%; text-align: center; }
@@ -98,27 +108,34 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .modal-botones button { flex: 1; }
 .btn-cancelar { background: #666; }
 .btn-confirmar { background: #0f6fd4; }
-.estado { text-align: center; color: #ffd700; font-size: 12px; margin-bottom: 10px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>🎮 SMASH ARENA</h1>
   <div class="estado" id="estado">🔄 Conectando...</div>
+  
+  <!-- BOTÓN DE ADMIN -->
+  <div class="admin-bar">
+    <button class="btn-admin" id="btnAdmin" onclick="toggleAdmin()">🔒 Modo Espectador (Toca para Admin)</button>
+  </div>
 
   <div class="tabs-row">
     <button class="tab activo" id="tabCola" onclick="cambiarTab('cola')">📋 Cola</button>
     <button class="tab" id="tabTop" onclick="cambiarTab('top')">🏆 Top</button>
-    <button class="btn-sesion" onclick="abrirModalSesion()">🌙 Terminar</button>
+    <button class="btn-sesion" id="btnTerminar" onclick="abrirModalSesion()" disabled>🌙 Terminar</button>
   </div>
 
   <div id="seccionCola">
     <div class="modo-switch">
-      <button class="modo-btn activo" id="btn1v1" onclick="cambiarModo('1v1')">1 vs 1</button>
-      <button class="modo-btn" id="btn2v2" onclick="cambiarModo('2v2')">2 vs 2</button>
+      <button class="modo-btn activo" id="btn1v1" onclick="cambiarModo('1v1')" disabled>1 vs 1</button>
+      <button class="modo-btn" id="btn2v2" onclick="cambiarModo('2v2')" disabled>2 vs 2</button>
+      <button class="modo-btn btn-puntos" id="btnPuntos" onclick="togglePuntos()" disabled>🔴 Puntos ON</button>
     </div>
+    
     <div class="info-jugadores" id="infoJugadores"></div>
-    <div class="add-form">
+    
+    <div class="add-form" id="formAgregar" style="display:none;">
       <input id="nombre" placeholder="Nombre del jugador..." onkeypress="if(event.key==='Enter') agregar()">
       <button onclick="agregar()">➕ Agregar</button>
     </div>
@@ -128,10 +145,9 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
     <div class="card">
       <h2>⏳ En cola</h2>
       <div id="lista"></div>
-      <button class="btn-reset" onclick="resetFila()">🔄 Reiniciar fila</button>
+      <button class="btn-reset" id="btnReset" onclick="resetFila()" style="display:none;">🔄 Reiniciar fila</button>
     </div>
 
-    <!-- NUEVO: HISTORIAL -->
     <div class="card">
       <h2>📜 Últimas partidas</h2>
       <div id="historial"></div>
@@ -139,7 +155,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   </div>
 
   <div id="seccionTop" class="oculto">
-    <div class="add-form">
+    <div class="add-form" id="formTop" style="display:none;">
       <input id="nuevoTop" placeholder="Nombre para el top..." onkeypress="if(event.key==='Enter') agregarAlTop()">
       <button onclick="agregarAlTop()">➕ Agregar al top</button>
     </div>
@@ -150,6 +166,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   </div>
 </div>
 
+<!-- MODAL RESULTADO -->
 <div class="pantalla-resultado" id="pantallaResultado">
   <div class="resultado-card">
     <div class="resultado-titulo">🏆 GANÓ <span id="nombreGanador"></span></div>
@@ -159,6 +176,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   </div>
 </div>
 
+<!-- MODAL TERMINAR SESIÓN -->
 <div class="modal" id="modalSesion">
   <div class="modal-card">
     <div class="modal-titulo">🌙 Terminar sesión</div>
@@ -190,14 +208,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// LLAVE SECRETA AQUÍ
+const ADMIN_PASSWORD = "Elcrak"; 
+
 let fila = [];
 let yaJugaron = [];
 let modo = '1v1';
 let tabActual = 'cola';
 let ranking = {};
 let historial = []; 
-let accionPendiente = null;
+let partidaEnCurso = null; // Guarda los datos de la partida si se marca ganador
 let cargando = true;
+
+// VARIABLES DE CONTROL
+let esAdmin = false;
+let puntosActivos = true; 
 
 const PUNTOS_INICIALES = 300;
 
@@ -209,11 +234,11 @@ async function guardarFirebase() {
       ranking: ranking,
       historial: historial,
       modo: modo,
+      puntosActivos: puntosActivos,
       ultimaActualizacion: Date.now()
     });
   } catch(e) {
     console.error("Error guardando:", e);
-    document.getElementById('estado').textContent = '⚠️ Error al guardar';
   }
 }
 
@@ -225,16 +250,52 @@ function escucharFirebase() {
       yaJugaron = data.yaJugaron || [];
       ranking = data.ranking || {};
       historial = data.historial || [];
+      modo = data.modo || '1v1';
+      puntosActivos = data.puntosActivos !== undefined ? data.puntosActivos : true;
+      
       cargando = false;
       document.getElementById('estado').textContent = '🟢 Conectado - Top mundial en vivo';
       render();
     } else {
       guardarFirebase();
     }
-  }, (error) => {
-    console.error("Error escuchando:", error);
-    document.getElementById('estado').textContent = '⚠️ Sin conexión';
   });
+}
+
+// ========== ADMIN Y BOTONES ==========
+function toggleAdmin() {
+  if (esAdmin) {
+    // Cerrar sesión de admin
+    esAdmin = false;
+    document.getElementById('btnAdmin').className = 'btn-admin';
+    document.getElementById('btnAdmin').textContent = '🔒 Modo Espectador (Toca para Admin)';
+    document.getElementById('btnTerminar').disabled = true;
+  } else {
+    // Pedir contraseña
+    const pass = prompt("Ingresa la contraseña de Admin:");
+    if (pass === ADMIN_PASSWORD) {
+      esAdmin = true;
+      document.getElementById('btnAdmin').className = 'btn-admin activo';
+      document.getElementById('btnAdmin').textContent = '👑 Eres el Admin';
+      document.getElementById('btnTerminar').disabled = false;
+      alert("¡Bienvenido, Crak! Tienes el control total.");
+    } else if (pass !== null) {
+      alert("Contraseña incorrecta. Eres un espectador.");
+    }
+  }
+  render(); // Actualizar la vista para mostrar/ocultar botones
+}
+
+function togglePuntos() {
+  if (!esAdmin) return;
+  puntosActivos = !puntosActivos;
+  guardarFirebase();
+}
+
+function cambiarModo(nuevo) {
+  if (!esAdmin) return;
+  modo = nuevo;
+  guardarFirebase();
 }
 
 function cambiarTab(tab) {
@@ -243,13 +304,6 @@ function cambiarTab(tab) {
   document.getElementById('tabTop').classList.toggle('activo', tab === 'top');
   document.getElementById('seccionCola').classList.toggle('oculto', tab !== 'cola');
   document.getElementById('seccionTop').classList.toggle('oculto', tab !== 'top');
-  render();
-}
-
-function cambiarModo(nuevo) {
-  modo = nuevo;
-  document.getElementById('btn1v1').classList.toggle('activo', modo === '1v1');
-  document.getElementById('btn2v2').classList.toggle('activo', modo === '2v2');
   render();
 }
 
@@ -270,7 +324,9 @@ function calcularRobo(pG, pP) {
   return Math.round(dif * 0.05);
 }
 
+// ========== AGREGAR ==========
 async function agregar() {
+  if (!esAdmin) return;
   const input = document.getElementById('nombre');
   const nombre = input.value.trim();
   if (!nombre) return;
@@ -296,18 +352,41 @@ async function agregar() {
 }
 
 async function agregarAlTop() {
+  if (!esAdmin) return;
   const input = document.getElementById('nuevoTop');
   const nombre = input.value.trim();
   if (!nombre) return;
   if (ranking[nombre]) { alert(`${nombre} ya está en el top`); return; }
   ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
   input.value = '';
-  input.focus();
   await guardarFirebase();
 }
 
+// ========== RENDER ==========
 function render() {
   if (cargando) return;
+  
+  // Actualizar UI según permisos
+  document.getElementById('formAgregar').style.display = esAdmin ? 'flex' : 'none';
+  document.getElementById('formTop').style.display = esAdmin ? 'flex' : 'none';
+  document.getElementById('btnReset').style.display = esAdmin ? 'block' : 'none';
+  
+  document.getElementById('btn1v1').disabled = !esAdmin;
+  document.getElementById('btn2v2').disabled = !esAdmin;
+  document.getElementById('btnPuntos').disabled = !esAdmin;
+  
+  document.getElementById('btn1v1').classList.toggle('activo', modo === '1v1');
+  document.getElementById('btn2v2').classList.toggle('activo', modo === '2v2');
+  
+  const btnPts = document.getElementById('btnPuntos');
+  if (puntosActivos) {
+    btnPts.className = 'modo-btn btn-puntos activo';
+    btnPts.textContent = '🔴 Puntos ON';
+  } else {
+    btnPts.className = 'modo-btn btn-puntos off';
+    btnPts.textContent = '⚪ Puntos OFF';
+  }
+
   if (tabActual === 'cola') renderCola();
   else renderTop();
 }
@@ -338,27 +417,29 @@ function renderPartida() {
         <span class="vs-texto">VS</span>
         <div class="jugador-actual"><span class="etiqueta">Jugador 2</span>${j2}<span class="pts-mini">${p2} pts</span></div>
       </div>
+      ${esAdmin ? `
       <p style="color:#aaa; margin-top:10px; text-align:center;">¿Quién ganó?</p>
       <div class="botones-ganador">
         <button class="btn-ganador" onclick="ganador1v1(0)">🏆 ${j1}</button>
         <button class="btn-ganador" onclick="ganador1v1(1)">🏆 ${j2}</button>
-      </div>
+      </div>` : `<p style="color:#888; text-align:center; margin-top:10px;">🔒 Esperando al Admin para marcar ganador...</p>`}
     `;
   } else {
     const r1 = fila[0], a1 = fila[1], r2 = fila[2], a2 = fila[3];
     div.innerHTML = `
       <h2>🎯 Partida actual (2v2)</h2>
-      <p style="color:#888; font-size:12px; text-align:center; margin-bottom:10px;">⚠️ Este modo no cuenta puntos</p>
+      ${!puntosActivos ? '<p style="color:#ffd700; text-align:center; font-size:12px;">⚪ Modo Casual (No cuenta puntos)</p>' : ''}
       <div class="equipos-2v2">
         <div class="equipo equipo-rojo"><div class="equipo-titulo">🔴 Rojo</div><div class="equipo-jugadores">${r1}<br>${r2}</div></div>
         <span class="vs-texto">VS</span>
         <div class="equipo equipo-azul"><div class="equipo-titulo">🔵 Azul</div><div class="equipo-jugadores">${a1}<br>${a2}</div></div>
       </div>
+      ${esAdmin ? `
       <p style="color:#aaa; margin-top:10px; text-align:center;">¿Qué equipo ganó?</p>
       <div class="botones-ganador">
         <button class="btn-ganador rojo" onclick="ganador2v2('rojo')">🏆 Rojo</button>
         <button class="btn-ganador azul" onclick="ganador2v2('azul')">🏆 Azul</button>
-      </div>
+      </div>` : `<p style="color:#888; text-align:center; margin-top:10px;">🔒 Esperando al Admin...</p>`}
     `;
   }
 }
@@ -381,7 +462,7 @@ function renderListaCola() {
           <span class="numero">${i + 1}.</span>${ind}<span>${j}</span>
           ${esNuevo ? '<span class="badge">NUEVO</span>' : ''}
         </div>
-        <button class="btn-quitar" onclick="quitar('${j.replace(/'/g, "\\'")}')">❌</button>
+        ${esAdmin ? `<button class="btn-quitar" onclick="quitar('${j.replace(/'/g, "\\'")}')">❌</button>` : ''}
       </div>
     `;
   }).join('');
@@ -393,48 +474,73 @@ function renderHistorial() {
   div.innerHTML = historial.map(h => `
     <div class="hist-item">
       <span class="hist-ganador">🏆 ${h.ganador}</span> venció a <span class="hist-perdedor">${h.perdedor}</span>
-      <span style="color:#888; float:right;">(${h.robo} pts)</span>
+      ${h.robo > 0 ? `<span style="color:#888; float:right;">(${h.robo} pts)</span>` : '<span style="color:#888; float:right;">(Casual)</span>'}
     </div>
   `).join('');
 }
 
+// ========== LÓGICA DE GANADORES ==========
 function ganador1v1(indice) {
+  if (!esAdmin) return;
   const gN = fila[indice];
   const pN = fila[1 - indice];
 
-  if (!ranking[gN]) ranking[gN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
-  if (!ranking[pN]) ranking[pN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
+  let antesG = 0, antesP = 0, robo = 0;
 
-  const antesG = ranking[gN].puntos;
-  const antesP = ranking[pN].puntos;
-  const robo = calcularRobo(antesG, antesP);
+  if (puntosActivos) {
+    if (!ranking[gN]) ranking[gN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
+    if (!ranking[pN]) ranking[pN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
 
-  ranking[gN].puntos += robo;
-  ranking[pN].puntos = Math.max(0, ranking[pN].puntos - robo);
-  ranking[gN].victorias += 1;
-  ranking[pN].derrotas += 1;
-  
-  ranking[gN].racha = (ranking[gN].racha || 0) + 1;
-  ranking[pN].racha = 0;
+    antesG = ranking[gN].puntos;
+    antesP = ranking[pN].puntos;
+    robo = calcularRobo(antesG, antesP);
 
-  const despG = ranking[gN].puntos;
-  const despP = ranking[pN].puntos;
+    ranking[gN].puntos += robo;
+    ranking[pN].puntos = Math.max(0, ranking[pN].puntos - robo);
+    ranking[gN].victorias += 1;
+    ranking[pN].derrotas += 1;
+    
+    ranking[gN].racha = (ranking[gN].racha || 0) + 1;
+    ranking[pN].racha = 0;
 
-  historial.unshift({ ganador: gN, perdedor: pN, robo: robo, fecha: Date.now() });
-  if (historial.length > 10) historial.pop(); 
+    historial.unshift({ ganador: gN, perdedor: pN, robo: robo, fecha: Date.now() });
+    if (historial.length > 10) historial.pop();
+  }
 
-  accionPendiente = async () => {
-    fila.splice(0, 2);
-    fila.unshift(gN);
-    fila.push(pN);
-    if (!yaJugaron.includes(gN)) yaJugaron.push(gN);
-    if (!yaJugaron.includes(pN)) yaJugaron.push(pN);
-    await guardarFirebase();
-  };
+  // Rotar Fila
+  fila.splice(0, 2);
+  fila.unshift(gN);
+  fila.push(pN);
+  if (!yaJugaron.includes(gN)) yaJugaron.push(gN);
+  if (!yaJugaron.includes(pN)) yaJugaron.push(pN);
 
-  mostrarResultado(gN, pN, antesG, despG, antesP, despP, robo);
+  guardarFirebase();
+
+  if (puntosActivos) {
+    mostrarResultado(gN, pN, antesG, antesG + robo, antesP, Math.max(0, antesP - robo), robo);
+  } else {
+    mostrarResultadoCasual(gN, pN);
+  }
 }
 
+async function ganador2v2(eq) {
+  if (!esAdmin) return;
+  let g, p;
+  if (eq === 'rojo') { g = [fila[0], fila[2]]; p = [fila[1], fila[3]]; }
+  else { g = [fila[1], fila[3]]; p = [fila[0], fila[2]]; }
+
+  // Rotar
+  fila.splice(0, 4);
+  const s1 = fila.shift();
+  const s2 = fila.shift();
+  fila.unshift(s2); fila.unshift(g[1]); fila.unshift(s1); fila.unshift(g[0]);
+  fila.push(p[0]); fila.push(p[1]);
+  [...g, ...p].forEach(n => { if (!yaJugaron.includes(n)) yaJugaron.push(n); });
+  
+  guardarFirebase();
+}
+
+// ========== RESULTADOS ==========
 function mostrarResultado(g, p, aG, dG, aP, dP, robo) {
   document.getElementById('nombreGanador').textContent = g;
   const cG = dG - aG, cP = dP - aP;
@@ -459,29 +565,29 @@ function mostrarResultado(g, p, aG, dG, aP, dP, robo) {
   document.getElementById('pantallaResultado').classList.add('mostrar');
 }
 
-async function continuarPartida() {
-  document.getElementById('pantallaResultado').classList.remove('mostrar');
-  if (accionPendiente) {
-    await accionPendiente();
-    accionPendiente = null;
-  }
+function mostrarResultadoCasual(g, p) {
+  document.getElementById('nombreGanador').textContent = g;
+  document.getElementById('resultadoCuerpo').innerHTML = `
+    <div class="resultado-jugador ganador resultado-ganador">
+      <div class="resultado-nombre">🏆 ${g}</div>
+      <div style="color:#aaa; font-size:13px; margin-top:5px;">Victoria casual</div>
+    </div>
+    <div class="resultado-jugador perdedor resultado-perdedor">
+      <div class="resultado-nombre">😢 ${p}</div>
+      <div style="color:#aaa; font-size:13px; margin-top:5px;">Derrota casual</div>
+    </div>
+  `;
+  document.getElementById('resultadoInfo').textContent = "⚪ Modo Casual: No se alteraron los puntos.";
+  document.getElementById('pantallaResultado').classList.add('mostrar');
 }
 
-async function ganador2v2(eq) {
-  let g, p;
-  if (eq === 'rojo') { g = [fila[0], fila[2]]; p = [fila[1], fila[3]]; }
-  else { g = [fila[1], fila[3]]; p = [fila[0], fila[2]]; }
-
-  fila.splice(0, 4);
-  const s1 = fila.shift();
-  const s2 = fila.shift();
-  fila.unshift(s2); fila.unshift(g[1]); fila.unshift(s1); fila.unshift(g[0]);
-  fila.push(p[0]); fila.push(p[1]);
-  [...g, ...p].forEach(n => { if (!yaJugaron.includes(n)) yaJugaron.push(n); });
-  await guardarFirebase();
+function continuarPartida() {
+  document.getElementById('pantallaResultado').classList.remove('mostrar');
+  render();
 }
 
 async function quitar(nombre) {
+  if (!esAdmin) return;
   if (confirm(`¿Quitar a ${nombre}?`)) {
     fila = fila.filter(n => n !== nombre);
     await guardarFirebase();
@@ -489,12 +595,14 @@ async function quitar(nombre) {
 }
 
 async function resetFila() {
+  if (!esAdmin) return;
   if (confirm('¿Borrar la fila actual?')) {
     fila = [];
     await guardarFirebase();
   }
 }
 
+// ========== TOP ==========
 function renderTop() {
   const cont = document.getElementById('listaTop');
   const jugs = Object.keys(ranking).map(n => ({ nombre: n, ...ranking[n] })).sort((a, b) => b.puntos - a.puntos);
@@ -508,9 +616,7 @@ function renderTop() {
     else { med = `${pos}.`; }
     
     let rachaHTML = '';
-    if (j.racha >= 2) {
-      rachaHTML = `<span class="racha">🔥 x${j.racha}</span>`;
-    }
+    if (j.racha >= 2) rachaHTML = `<span class="racha">🔥 x${j.racha}</span>`;
 
     return `
       <div class="top-item ${cls}">
@@ -520,16 +626,18 @@ function renderTop() {
           <div class="top-stats">${j.victorias}V - ${j.derrotas}D</div>
         </div>
         <div class="top-puntos">${j.puntos} pts</div>
+        ${esAdmin ? `
         <div class="top-acciones">
           <button class="btn-mini btn-edit" onclick="editarJugador('${j.nombre.replace(/'/g, "\\'")}')">✏️</button>
           <button class="btn-mini btn-del" onclick="eliminarDelTop('${j.nombre.replace(/'/g, "\\'")}')">🗑️</button>
-        </div>
+        </div>` : ''}
       </div>
     `;
   }).join('');
 }
 
 async function editarJugador(nombre) {
+  if (!esAdmin) return;
   const j = ranking[nombre];
   if (!j) return;
   const np = prompt(`Puntos de ${nombre}:`, j.puntos);
@@ -541,7 +649,8 @@ async function editarJugador(nombre) {
 }
 
 async function eliminarDelTop(nombre) {
-  if (confirm(`¿Eliminar a ${nombre}?`)) {
+  if (!esAdmin) return;
+  if (confirm(`¿Eliminar a ${nombre} del top?`)) {
     delete ranking[nombre];
     fila = fila.filter(n => n !== nombre);
     yaJugaron = yaJugaron.filter(n => n !== nombre);
@@ -549,9 +658,14 @@ async function eliminarDelTop(nombre) {
   }
 }
 
-function abrirModalSesion() { document.getElementById('modalSesion').classList.add('mostrar'); }
+// ========== MODAL SESIÓN ==========
+function abrirModalSesion() { 
+  if (!esAdmin) return;
+  document.getElementById('modalSesion').classList.add('mostrar'); 
+}
 function cerrarModalSesion() { document.getElementById('modalSesion').classList.remove('mostrar'); }
 async function confirmarTerminarSesion() {
+  if (!esAdmin) return;
   fila = [];
   yaJugaron = [];
   historial = []; 
@@ -562,6 +676,8 @@ async function confirmarTerminarSesion() {
 
 escucharFirebase();
 
+window.toggleAdmin = toggleAdmin;
+window.togglePuntos = togglePuntos;
 window.cambiarTab = cambiarTab;
 window.cambiarModo = cambiarModo;
 window.agregar = agregar;
