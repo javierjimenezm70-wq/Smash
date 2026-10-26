@@ -11,19 +11,24 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(1
 h1 { color: #e94560; text-align: center; font-size: 28px; margin-bottom: 5px; text-shadow: 0 0 20px #e94560; }
 .estado { text-align: center; color: #ffd700; font-size: 12px; margin-bottom: 15px; }
 
-/* BOTÓN ADMIN */
-.admin-bar { text-align: center; margin-bottom: 15px; }
+.admin-bar { text-align: center; margin-bottom: 10px; }
 .btn-admin { background: #333; color: #ccc; padding: 8px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #555; cursor: pointer; }
 .btn-admin.activo { background: #ffd700; color: #000; border-color: #ffd700; font-weight: bold; box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+
+/* BARRA DE SALAS */
+.salas-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+.btn-sala { padding: 10px 20px; border-radius: 10px; font-weight: bold; border: 2px solid transparent; cursor: pointer; font-size: 14px; background: #16213e; color: #888; }
+.btn-sala.activo-live { background: #e94560; color: white; box-shadow: 0 0 10px rgba(233,69,96,0.5); }
+.btn-sala.activo-pub { background: #0f6fd4; color: white; box-shadow: 0 0 10px rgba(15,111,212,0.5); }
 
 .tabs-row { display: flex; gap: 5px; margin-bottom: 20px; background: #16213e; padding: 5px; border-radius: 12px; }
 .tab { flex: 1; padding: 12px; border: none; background: transparent; color: #888; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 .tab.activo { background: #e94560; color: white; }
-.btn-sesion { background: #0f6fd4; color: white; border: none; padding: 12px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+.btn-sesion { background: #0f6fd4; color: white; border: none; padding: 12px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; }
 .btn-sesion:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .modo-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-.modo-btn { background: #16213e; color: #888; padding: 8px 15px; border: 2px solid #16213e; font-size: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+.modo-btn { background: #16213e; color: #888; padding: 8px 15px; border: 2px solid #16213e; font-size: 14px; border-radius: 10px; cursor: pointer; font-weight: bold; }
 .modo-btn.activo { background: #e94560; color: white; border-color: #e94560; }
 .btn-puntos { background: #28a745; color: white; border-color: #28a745; }
 .btn-puntos.off { background: #555; color: #ccc; border-color: #555; }
@@ -39,18 +44,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 .jugador-actual { background: #e94560; padding: 12px 18px; border-radius: 10px; min-width: 110px; font-size: 18px; font-weight: bold; text-align: center; }
 .jugador-actual .pts-mini { display: block; font-size: 11px; opacity: 0.85; margin-top: 4px; font-weight: normal; }
 .vs-texto { color: #ffd700; font-size: 24px; font-weight: bold; }
-.equipos-2v2 { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
-.equipo { padding: 12px; border-radius: 12px; min-width: 150px; flex: 1; max-width: 200px; text-align: center; }
-.equipo-rojo { background: linear-gradient(135deg, #e94560, #b8273f); }
-.equipo-azul { background: linear-gradient(135deg, #0f6fd4, #0a4d94); }
-.equipo-titulo { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; margin-bottom: 6px; }
-.equipo-jugadores { font-size: 15px; font-weight: bold; line-height: 1.6; }
-.etiqueta { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; display: block; margin-bottom: 4px; }
-.botones-ganador { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-.btn-ganador { background: #28a745; padding: 10px 15px; font-size: 14px; }
-.btn-ganador.rojo { background: #c72a45; }
-.btn-ganador.azul { background: #0a4d94; }
-.jugador { background: #0f3460; padding: 10px 12px; margin: 6px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-left: 4px solid #e94560; gap: 8px; }
+.jugador { background: #0f3460; padding: 10px 12px; margin: 6px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-left: 4px solid #e94560; }
 .jugador.nuevo { border-left-color: #ffd700; background: #1a3a60; }
 .jugador-info { display: flex; align-items: center; gap: 8px; flex: 1; }
 .badge { background: #ffd700; color: #1a1a2e; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: bold; }
@@ -115,9 +109,14 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
   <h1>🎮 SMASH ARENA</h1>
   <div class="estado" id="estado">🔄 Conectando...</div>
   
-  <!-- BOTÓN DE ADMIN -->
   <div class="admin-bar">
     <button class="btn-admin" id="btnAdmin" onclick="toggleAdmin()">🔒 Modo Espectador (Toca para Admin)</button>
+  </div>
+
+  <!-- SELECTOR DE SALAS -->
+  <div class="salas-bar">
+    <button class="btn-sala activo-live" id="btnSalaLive" onclick="cambiarSala('live')">🔴 SALA LIVE</button>
+    <button class="btn-sala" id="btnSalaPub" onclick="cambiarSala('publica')">🔵 SALA PÚBLICA</button>
   </div>
 
   <div class="tabs-row">
@@ -148,7 +147,7 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
       <button class="btn-reset" id="btnReset" onclick="resetFila()" style="display:none;">🔄 Reiniciar fila</button>
     </div>
 
-    <div class="card">
+    <div class="card" id="cardHistorial">
       <h2>📜 Últimas partidas</h2>
       <div id="historial"></div>
     </div>
@@ -179,11 +178,11 @@ h2 { color: #e94560; font-size: 16px; margin-bottom: 12px; text-transform: upper
 <!-- MODAL TERMINAR SESIÓN -->
 <div class="modal" id="modalSesion">
   <div class="modal-card">
-    <div class="modal-titulo">🌙 Terminar sesión</div>
+    <div class="modal-titulo">🌙 Terminar sesión Live</div>
     <div class="modal-lista">
-      <div>✅ Se borrará la <b>fila 1v1 y 2v2</b></div>
-      <div>✅ Se borrará el <b>historial de partidas</b></div>
-      <div style="color:#ffd700; margin-top:8px;">🏆 El <b>Top Mundial se mantiene</b></div>
+      <div>✅ Se borrará la <b>fila de la Sala LIVE</b></div>
+      <div>✅ Se borrará el <b>historial de partidas Live</b></div>
+      <div style="color:#ffd700; margin-top:8px;">🏆 El <b>Top Mundial y la Sala Pública se mantienen</b></div>
     </div>
     <div class="modal-botones">
       <button class="btn-cancelar" onclick="cerrarModalSesion()">Cancelar</button>
@@ -208,33 +207,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// LLAVE SECRETA AQUÍ
 const ADMIN_PASSWORD = "Elcrak"; 
 
-let fila = [];
-let yaJugaron = [];
-let modo = '1v1';
-let tabActual = 'cola';
-let ranking = {};
-let historial = []; 
-let partidaEnCurso = null; // Guarda los datos de la partida si se marca ganador
+// ESTADO GLOBAL
+let ranking = {}; // El Top es global para todos
+let esAdmin = false;
+let salaActual = 'live'; // 'live' o 'publica'
 let cargando = true;
 
-// VARIABLES DE CONTROL
-let esAdmin = false;
-let puntosActivos = true; 
-
-const PUNTOS_INICIALES = 300;
+// ESTADO DE LAS SALAS
+let salas = {
+  live: { fila: [], yaJugaron: [], modo: '1v1', puntosActivos: true, historial: [] },
+  publica: { fila: [], yaJugaron: [], modo: '1v1', puntosActivos: false, historial: [] }
+};
 
 async function guardarFirebase() {
   try {
     await setDoc(doc(db, "app", "datos"), {
-      fila: fila,
-      yaJugaron: yaJugaron,
       ranking: ranking,
-      historial: historial,
-      modo: modo,
-      puntosActivos: puntosActivos,
+      salas: salas,
       ultimaActualizacion: Date.now()
     });
   } catch(e) {
@@ -246,13 +237,10 @@ function escucharFirebase() {
   onSnapshot(doc(db, "app", "datos"), (docSnap) => {
     if (docSnap.exists()) {
       const data = docSnap.data();
-      fila = data.fila || [];
-      yaJugaron = data.yaJugaron || [];
       ranking = data.ranking || {};
-      historial = data.historial || [];
-      modo = data.modo || '1v1';
-      puntosActivos = data.puntosActivos !== undefined ? data.puntosActivos : true;
-      
+      if (data.salas) {
+        salas = data.salas;
+      }
       cargando = false;
       document.getElementById('estado').textContent = '🟢 Conectado - Top mundial en vivo';
       render();
@@ -262,44 +250,44 @@ function escucharFirebase() {
   });
 }
 
-// ========== ADMIN Y BOTONES ==========
+// ========== CONTROLES ==========
 function toggleAdmin() {
   if (esAdmin) {
-    // Cerrar sesión de admin
     esAdmin = false;
     document.getElementById('btnAdmin').className = 'btn-admin';
     document.getElementById('btnAdmin').textContent = '🔒 Modo Espectador (Toca para Admin)';
-    document.getElementById('btnTerminar').disabled = true;
   } else {
-    // Pedir contraseña
     const pass = prompt("Ingresa la contraseña de Admin:");
     if (pass === ADMIN_PASSWORD) {
       esAdmin = true;
       document.getElementById('btnAdmin').className = 'btn-admin activo';
       document.getElementById('btnAdmin').textContent = '👑 Eres el Admin';
-      document.getElementById('btnTerminar').disabled = false;
       alert("¡Bienvenido, Crak! Tienes el control total.");
     } else if (pass !== null) {
-      alert("Contraseña incorrecta. Eres un espectador.");
+      alert("Contraseña incorrecta.");
     }
   }
-  render(); // Actualizar la vista para mostrar/ocultar botones
+  render();
+}
+
+function cambiarSala(nuevaSala) {
+  salaActual = nuevaSala;
+  render();
 }
 
 function togglePuntos() {
   if (!esAdmin) return;
-  puntosActivos = !puntosActivos;
+  salas[salaActual].puntosActivos = !salas[salaActual].puntosActivos;
   guardarFirebase();
 }
 
 function cambiarModo(nuevo) {
   if (!esAdmin) return;
-  modo = nuevo;
+  salas[salaActual].modo = nuevo;
   guardarFirebase();
 }
 
 function cambiarTab(tab) {
-  tabActual = tab;
   document.getElementById('tabCola').classList.toggle('activo', tab === 'cola');
   document.getElementById('tabTop').classList.toggle('activo', tab === 'top');
   document.getElementById('seccionCola').classList.toggle('oculto', tab !== 'cola');
@@ -307,11 +295,11 @@ function cambiarTab(tab) {
   render();
 }
 
-function jugadoresPorPartida() { return modo === '1v1' ? 2 : 4; }
+function jugadoresPorPartida() { return salas[salaActual].modo === '1v1' ? 2 : 4; }
 
 function obtenerPuntos(nombre) {
   if (!ranking[nombre]) {
-    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
+    ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
   }
   if (ranking[nombre].racha === undefined) ranking[nombre].racha = 0;
   return ranking[nombre].puntos;
@@ -330,20 +318,20 @@ async function agregar() {
   const input = document.getElementById('nombre');
   const nombre = input.value.trim();
   if (!nombre) return;
-  if (fila.includes(nombre)) { alert(`${nombre} ya está en la fila`); return; }
+  
+  const s = salas[salaActual];
+  if (s.fila.includes(nombre)) { alert(`${nombre} ya está en esta fila`); return; }
 
-  if (!ranking[nombre]) {
-    ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
-  }
+  if (!ranking[nombre]) ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
 
-  const esNuevo = !yaJugaron.includes(nombre);
+  const esNuevo = !s.yaJugaron.includes(nombre);
   const enJuego = jugadoresPorPartida();
 
   if (esNuevo) {
-    if (fila.length <= enJuego) fila.push(nombre);
-    else fila.splice(enJuego, 0, nombre);
+    if (s.fila.length <= enJuego) s.fila.push(nombre);
+    else s.fila.splice(enJuego, 0, nombre);
   } else {
-    fila.push(nombre);
+    s.fila.push(nombre);
   }
 
   input.value = '';
@@ -357,7 +345,7 @@ async function agregarAlTop() {
   const nombre = input.value.trim();
   if (!nombre) return;
   if (ranking[nombre]) { alert(`${nombre} ya está en el top`); return; }
-  ranking[nombre] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
+  ranking[nombre] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
   input.value = '';
   await guardarFirebase();
 }
@@ -366,20 +354,25 @@ async function agregarAlTop() {
 function render() {
   if (cargando) return;
   
-  // Actualizar UI según permisos
+  // UI Salas
+  document.getElementById('btnSalaLive').className = 'btn-sala ' + (salaActual === 'live' ? 'activo-live' : '');
+  document.getElementById('btnSalaPub').className = 'btn-sala ' + (salaActual === 'publica' ? 'activo-pub' : '');
+  
   document.getElementById('formAgregar').style.display = esAdmin ? 'flex' : 'none';
   document.getElementById('formTop').style.display = esAdmin ? 'flex' : 'none';
   document.getElementById('btnReset').style.display = esAdmin ? 'block' : 'none';
+  document.getElementById('cardHistorial').style.display = esAdmin ? 'block' : 'none';
   
   document.getElementById('btn1v1').disabled = !esAdmin;
   document.getElementById('btn2v2').disabled = !esAdmin;
   document.getElementById('btnPuntos').disabled = !esAdmin;
   
-  document.getElementById('btn1v1').classList.toggle('activo', modo === '1v1');
-  document.getElementById('btn2v2').classList.toggle('activo', modo === '2v2');
+  const s = salas[salaActual];
+  document.getElementById('btn1v1').classList.toggle('activo', s.modo === '1v1');
+  document.getElementById('btn2v2').classList.toggle('activo', s.modo === '2v2');
   
   const btnPts = document.getElementById('btnPuntos');
-  if (puntosActivos) {
+  if (s.puntosActivos) {
     btnPts.className = 'modo-btn btn-puntos activo';
     btnPts.textContent = '🔴 Puntos ON';
   } else {
@@ -387,12 +380,15 @@ function render() {
     btnPts.textContent = '⚪ Puntos OFF';
   }
 
-  if (tabActual === 'cola') renderCola();
-  else renderTop();
+  if (!document.getElementById('seccionCola').classList.contains('oculto')) {
+    renderCola();
+  } else {
+    renderTop();
+  }
 }
 
 function renderCola() {
-  document.getElementById('infoJugadores').textContent = `📊 ${Object.keys(ranking).length} jugadores en el top`;
+  document.getElementById('infoJugadores').textContent = `📊 ${Object.keys(ranking).length} jugadores en el top mundial`;
   renderPartida();
   renderListaCola();
   renderHistorial();
@@ -400,15 +396,16 @@ function renderCola() {
 
 function renderPartida() {
   const div = document.getElementById('partidaActual');
+  const s = salas[salaActual];
   const enJuego = jugadoresPorPartida();
 
-  if (fila.length < enJuego) {
-    div.innerHTML = `<h2>🎯 Partida actual (${modo})</h2><div class="vacio">Faltan jugadores: ${fila.length}/${enJuego}</div>`;
+  if (s.fila.length < enJuego) {
+    div.innerHTML = `<h2>🎯 Partida actual (${s.modo})</h2><div class="vacio">Faltan jugadores: ${s.fila.length}/${enJuego}</div>`;
     return;
   }
 
-  if (modo === '1v1') {
-    const j1 = fila[0], j2 = fila[1];
+  if (s.modo === '1v1') {
+    const j1 = s.fila[0], j2 = s.fila[1];
     const p1 = obtenerPuntos(j1), p2 = obtenerPuntos(j2);
     div.innerHTML = `
       <h2>🎯 Partida actual (1v1)</h2>
@@ -422,13 +419,12 @@ function renderPartida() {
       <div class="botones-ganador">
         <button class="btn-ganador" onclick="ganador1v1(0)">🏆 ${j1}</button>
         <button class="btn-ganador" onclick="ganador1v1(1)">🏆 ${j2}</button>
-      </div>` : `<p style="color:#888; text-align:center; margin-top:10px;">🔒 Esperando al Admin para marcar ganador...</p>`}
+      </div>` : `<p style="color:#888; text-align:center; margin-top:10px;">🔒 Esperando al Admin...</p>`}
     `;
   } else {
-    const r1 = fila[0], a1 = fila[1], r2 = fila[2], a2 = fila[3];
+    const r1 = s.fila[0], a1 = s.fila[1], r2 = s.fila[2], a2 = s.fila[3];
     div.innerHTML = `
       <h2>🎯 Partida actual (2v2)</h2>
-      ${!puntosActivos ? '<p style="color:#ffd700; text-align:center; font-size:12px;">⚪ Modo Casual (No cuenta puntos)</p>' : ''}
       <div class="equipos-2v2">
         <div class="equipo equipo-rojo"><div class="equipo-titulo">🔴 Rojo</div><div class="equipo-jugadores">${r1}<br>${r2}</div></div>
         <span class="vs-texto">VS</span>
@@ -446,14 +442,17 @@ function renderPartida() {
 
 function renderListaCola() {
   const lista = document.getElementById('lista');
+  const s = salas[salaActual];
   const enJuego = jugadoresPorPartida();
-  const enEspera = fila.slice(enJuego);
+  const enEspera = s.fila.slice(enJuego);
+  
   if (enEspera.length === 0) { lista.innerHTML = '<div class="vacio">No hay nadie esperando</div>'; return; }
+  
   lista.innerHTML = enEspera.map((j, i) => {
-    const esNuevo = !yaJugaron.includes(j);
+    const esNuevo = !s.yaJugaron.includes(j);
     const posReal = i + enJuego + 1;
     let ind = '';
-    if (modo === '2v2') {
+    if (s.modo === '2v2') {
       ind = posReal % 2 === 1 ? '<span style="color:#e94560; font-size:11px;">🔴</span>' : '<span style="color:#0f6fd4; font-size:11px;">🔵</span>';
     }
     return `
@@ -470,53 +469,49 @@ function renderListaCola() {
 
 function renderHistorial() {
   const div = document.getElementById('historial');
-  if (!historial || historial.length === 0) { div.innerHTML = '<div class="vacio">Aún no hay partidas</div>'; return; }
-  div.innerHTML = historial.map(h => `
+  const h = salas[salaActual].historial;
+  if (!h || h.length === 0) { div.innerHTML = '<div class="vacio">Aún no hay partidas</div>'; return; }
+  div.innerHTML = h.map(item => `
     <div class="hist-item">
-      <span class="hist-ganador">🏆 ${h.ganador}</span> venció a <span class="hist-perdedor">${h.perdedor}</span>
-      ${h.robo > 0 ? `<span style="color:#888; float:right;">(${h.robo} pts)</span>` : '<span style="color:#888; float:right;">(Casual)</span>'}
+      <span class="hist-ganador">🏆 ${item.ganador}</span> venció a <span class="hist-perdedor">${item.perdedor}</span>
+      ${item.robo > 0 ? `<span style="color:#888; float:right;">(${item.robo} pts)</span>` : '<span style="color:#888; float:right;">(Casual)</span>'}
     </div>
   `).join('');
 }
 
-// ========== LÓGICA DE GANADORES ==========
+// ========== GANADORES ==========
 function ganador1v1(indice) {
   if (!esAdmin) return;
-  const gN = fila[indice];
-  const pN = fila[1 - indice];
-
+  const s = salas[salaActual];
+  const gN = s.fila[indice];
+  const pN = s.fila[1 - indice];
   let antesG = 0, antesP = 0, robo = 0;
 
-  if (puntosActivos) {
-    if (!ranking[gN]) ranking[gN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
-    if (!ranking[pN]) ranking[pN] = { puntos: PUNTOS_INICIALES, victorias: 0, derrotas: 0, racha: 0 };
-
-    antesG = ranking[gN].puntos;
-    antesP = ranking[pN].puntos;
+  if (s.puntosActivos) {
+    if (!ranking[gN]) ranking[gN] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
+    if (!ranking[pN]) ranking[pN] = { puntos: 300, victorias: 0, derrotas: 0, racha: 0 };
+    antesG = ranking[gN].puntos; antesP = ranking[pN].puntos;
     robo = calcularRobo(antesG, antesP);
-
     ranking[gN].puntos += robo;
     ranking[pN].puntos = Math.max(0, ranking[pN].puntos - robo);
-    ranking[gN].victorias += 1;
-    ranking[pN].derrotas += 1;
+    ranking[gN].victorias += 1; ranking[pN].derrotas += 1;
+    ranking[gN].racha += 1; ranking[pN].racha = 0;
     
-    ranking[gN].racha = (ranking[gN].racha || 0) + 1;
-    ranking[pN].racha = 0;
-
-    historial.unshift({ ganador: gN, perdedor: pN, robo: robo, fecha: Date.now() });
-    if (historial.length > 10) historial.pop();
+    s.historial.unshift({ ganador: gN, perdedor: pN, robo: robo, fecha: Date.now() });
+    if (s.historial.length > 10) s.historial.pop();
+  } else {
+    s.historial.unshift({ ganador: gN, perdedor: pN, robo: 0, fecha: Date.now() });
+    if (s.historial.length > 10) s.historial.pop();
   }
 
-  // Rotar Fila
-  fila.splice(0, 2);
-  fila.unshift(gN);
-  fila.push(pN);
-  if (!yaJugaron.includes(gN)) yaJugaron.push(gN);
-  if (!yaJugaron.includes(pN)) yaJugaron.push(pN);
+  // Rotar
+  s.fila.splice(0, 2); s.fila.unshift(gN); s.fila.push(pN);
+  if (!s.yaJugaron.includes(gN)) s.yaJugaron.push(gN);
+  if (!s.yaJugaron.includes(pN)) s.yaJugaron.push(pN);
 
   guardarFirebase();
 
-  if (puntosActivos) {
+  if (s.puntosActivos) {
     mostrarResultado(gN, pN, antesG, antesG + robo, antesP, Math.max(0, antesP - robo), robo);
   } else {
     mostrarResultadoCasual(gN, pN);
@@ -525,22 +520,20 @@ function ganador1v1(indice) {
 
 async function ganador2v2(eq) {
   if (!esAdmin) return;
+  const s = salas[salaActual];
   let g, p;
-  if (eq === 'rojo') { g = [fila[0], fila[2]]; p = [fila[1], fila[3]]; }
-  else { g = [fila[1], fila[3]]; p = [fila[0], fila[2]]; }
+  if (eq === 'rojo') { g = [s.fila[0], s.fila[2]]; p = [s.fila[1], s.fila[3]]; }
+  else { g = [s.fila[1], s.fila[3]]; p = [s.fila[0], s.fila[2]]; }
 
-  // Rotar
-  fila.splice(0, 4);
-  const s1 = fila.shift();
-  const s2 = fila.shift();
-  fila.unshift(s2); fila.unshift(g[1]); fila.unshift(s1); fila.unshift(g[0]);
-  fila.push(p[0]); fila.push(p[1]);
-  [...g, ...p].forEach(n => { if (!yaJugaron.includes(n)) yaJugaron.push(n); });
+  s.fila.splice(0, 4);
+  const s1 = s.fila.shift(); const s2 = s.fila.shift();
+  s.fila.unshift(s2); s.fila.unshift(g[1]); s.fila.unshift(s1); s.fila.unshift(g[0]);
+  s.fila.push(p[0]); s.fila.push(p[1]);
   
+  [...g, ...p].forEach(n => { if (!s.yaJugaron.includes(n)) s.yaJugaron.push(n); });
   guardarFirebase();
 }
 
-// ========== RESULTADOS ==========
 function mostrarResultado(g, p, aG, dG, aP, dP, robo) {
   document.getElementById('nombreGanador').textContent = g;
   const cG = dG - aG, cP = dP - aP;
@@ -568,14 +561,8 @@ function mostrarResultado(g, p, aG, dG, aP, dP, robo) {
 function mostrarResultadoCasual(g, p) {
   document.getElementById('nombreGanador').textContent = g;
   document.getElementById('resultadoCuerpo').innerHTML = `
-    <div class="resultado-jugador ganador resultado-ganador">
-      <div class="resultado-nombre">🏆 ${g}</div>
-      <div style="color:#aaa; font-size:13px; margin-top:5px;">Victoria casual</div>
-    </div>
-    <div class="resultado-jugador perdedor resultado-perdedor">
-      <div class="resultado-nombre">😢 ${p}</div>
-      <div style="color:#aaa; font-size:13px; margin-top:5px;">Derrota casual</div>
-    </div>
+    <div class="resultado-jugador ganador resultado-ganador"><div class="resultado-nombre">🏆 ${g}</div><div style="color:#aaa; font-size:13px; margin-top:5px;">Victoria casual</div></div>
+    <div class="resultado-jugador perdedor resultado-perdedor"><div class="resultado-nombre">😢 ${p}</div><div style="color:#aaa; font-size:13px; margin-top:5px;">Derrota casual</div></div>
   `;
   document.getElementById('resultadoInfo').textContent = "⚪ Modo Casual: No se alteraron los puntos.";
   document.getElementById('pantallaResultado').classList.add('mostrar');
@@ -589,15 +576,15 @@ function continuarPartida() {
 async function quitar(nombre) {
   if (!esAdmin) return;
   if (confirm(`¿Quitar a ${nombre}?`)) {
-    fila = fila.filter(n => n !== nombre);
+    salas[salaActual].fila = salas[salaActual].fila.filter(n => n !== nombre);
     await guardarFirebase();
   }
 }
 
 async function resetFila() {
   if (!esAdmin) return;
-  if (confirm('¿Borrar la fila actual?')) {
-    fila = [];
+  if (confirm('¿Borrar la fila actual de esta sala?')) {
+    salas[salaActual].fila = [];
     await guardarFirebase();
   }
 }
@@ -652,31 +639,30 @@ async function eliminarDelTop(nombre) {
   if (!esAdmin) return;
   if (confirm(`¿Eliminar a ${nombre} del top?`)) {
     delete ranking[nombre];
-    fila = fila.filter(n => n !== nombre);
-    yaJugaron = yaJugaron.filter(n => n !== nombre);
+    salas.live.fila = salas.live.fila.filter(n => n !== nombre);
+    salas.publica.fila = salas.publica.fila.filter(n => n !== nombre);
+    salas.live.yaJugaron = salas.live.yaJugaron.filter(n => n !== nombre);
+    salas.publica.yaJugaron = salas.publica.yaJugaron.filter(n => n !== nombre);
     await guardarFirebase();
   }
 }
 
-// ========== MODAL SESIÓN ==========
-function abrirModalSesion() { 
-  if (!esAdmin) return;
-  document.getElementById('modalSesion').classList.add('mostrar'); 
-}
+function abrirModalSesion() { if (!esAdmin) return; document.getElementById('modalSesion').classList.add('mostrar'); }
 function cerrarModalSesion() { document.getElementById('modalSesion').classList.remove('mostrar'); }
 async function confirmarTerminarSesion() {
   if (!esAdmin) return;
-  fila = [];
-  yaJugaron = [];
-  historial = []; 
+  salas.live.fila = [];
+  salas.live.yaJugaron = [];
+  salas.live.historial = []; 
   await guardarFirebase();
   cerrarModalSesion();
-  alert('✅ Sesión terminada\n🎮 Filas vacías\n🏆 Top mantenido');
+  alert('✅ Sesión Live terminada\n🎮 Tu fila está vacía\n🏆 Top y Sala Pública mantenidos');
 }
 
 escucharFirebase();
 
 window.toggleAdmin = toggleAdmin;
+window.cambiarSala = cambiarSala;
 window.togglePuntos = togglePuntos;
 window.cambiarTab = cambiarTab;
 window.cambiarModo = cambiarModo;
