@@ -214,8 +214,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 👑 AQUÍ ESTÁ LA NUEVA CONTRASEÑA 👑
-const ADMIN_PASSWORD = "Green princes"; 
+// 👑 LAS 3 CONTRASEÑAS MAESTRAS 👑
+const PASSWORDS = [
+  "Danonino", 
+  "Green princes", 
+  "El crak",
+  "👑 Green princes 👑" // Por si la escribes con las coronas
+];
 
 let ranking = {}; 
 let esAdmin = false;
@@ -263,7 +268,8 @@ function toggleAdmin() {
     document.getElementById('btnAdmin').textContent = '🔒 Modo Espectador (Toca para Admin)';
   } else {
     const pass = prompt("Ingresa la contraseña de Admin:");
-    if (pass === ADMIN_PASSWORD) {
+    // Comprobamos si la contraseña está en la lista
+    if (pass !== null && PASSWORDS.includes(pass)) {
       esAdmin = true;
       document.getElementById('btnAdmin').className = 'btn-admin activo';
       document.getElementById('btnAdmin').textContent = '👑 Eres el Admin';
